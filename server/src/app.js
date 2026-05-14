@@ -19,6 +19,7 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use('/exports', express.static(require('path').join(__dirname, '../public/exports')));
 
 // Health Check Route
 app.get('/', (req, res) => {
@@ -32,6 +33,8 @@ app.get('/', (req, res) => {
 app.use('/api/auth', require('./routes/user.routes.js'));
 app.use('/api/expenses', require('./routes/expense.routes.js'));
 app.use('/api/budgets', require('./routes/budget.routes.js'));
+app.use('/api/exports', require('./routes/export.routes.js'));
+app.use('/api/dashboard', require('./routes/dashboard.routes.js'));
 
 // Error Handling
 app.use(notFound);

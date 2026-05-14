@@ -2,13 +2,7 @@
 
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 
-const data = [
-  { name: 'Housing & Utilities', value: 40 },
-  { name: 'Technology', value: 25 },
-  { name: 'Operational', value: 35 },
-];
-
-export default function CategoryBreakdownChart() {
+export default function CategoryBreakdownChart({ chartData = [] }) {
   return (
     <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 p-6 rounded-sm h-full flex flex-col shadow-sm">
       <h3 className="font-bold text-lg tracking-tight text-zinc-900 dark:text-white mb-6">Category Breakdown</h3>
@@ -17,7 +11,7 @@ export default function CategoryBreakdownChart() {
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
-              data={data}
+              data={chartData}
               cx="50%"
               cy="50%"
               innerRadius={65}
@@ -41,27 +35,25 @@ export default function CategoryBreakdownChart() {
       </div>
 
       <div className="mt-8 space-y-3">
-        <div className="flex items-center justify-between text-sm">
-          <div className="flex items-center gap-2">
-            <div className="w-2.5 h-2.5 bg-black dark:bg-white rounded-sm"></div>
-            <span className="text-zinc-600 dark:text-zinc-300 font-medium">Housing & Utilities</span>
-          </div>
-          <span className="font-mono text-xs text-zinc-900 dark:text-white font-bold">40%</span>
-        </div>
-        <div className="flex items-center justify-between text-sm">
-          <div className="flex items-center gap-2">
-            <div className="w-2.5 h-2.5 bg-zinc-500 dark:bg-zinc-400 rounded-sm"></div>
-            <span className="text-zinc-600 dark:text-zinc-300 font-medium">Technology</span>
-          </div>
-          <span className="font-mono text-xs text-zinc-900 dark:text-white font-bold">25%</span>
-        </div>
-        <div className="flex items-center justify-between text-sm">
-          <div className="flex items-center gap-2">
-            <div className="w-2.5 h-2.5 bg-zinc-200 dark:bg-zinc-700 rounded-sm"></div>
-            <span className="text-zinc-600 dark:text-zinc-300 font-medium">Operational</span>
-          </div>
-          <span className="font-mono text-xs text-zinc-900 dark:text-white font-bold">35%</span>
-        </div>
+        {chartData.length === 0 ? (
+          <div className="text-sm text-center text-zinc-500">No data available</div>
+        ) : chartData.map((item, index) => {
+          const colors = [
+            "bg-black dark:bg-white",
+            "bg-zinc-500 dark:bg-zinc-400",
+            "bg-zinc-200 dark:bg-zinc-700"
+          ];
+          const bgClass = colors[index % colors.length];
+          return (
+            <div key={item.name} className="flex items-center justify-between text-sm">
+              <div className="flex items-center gap-2">
+                <div className={`w-2.5 h-2.5 ${bgClass} rounded-sm`}></div>
+                <span className="text-zinc-600 dark:text-zinc-300 font-medium">{item.name}</span>
+              </div>
+              <span className="font-mono text-xs text-zinc-900 dark:text-white font-bold">{item.value}%</span>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

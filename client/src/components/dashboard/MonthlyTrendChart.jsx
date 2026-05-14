@@ -1,31 +1,21 @@
 "use client";
 
-import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Cell, LabelList } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LabelList } from 'recharts';
 import { useState } from 'react';
 
-const data = [
-  { name: 'MON', value: 1800 },
-  { name: 'TUE', value: 2400 },
-  { name: 'WED', value: 2100 },
-  { name: 'THU', value: 3100 },
-  { name: 'FRI', value: 1500 },
-  { name: 'SAT', value: 2600 },
-  { name: 'SUN', value: 2300 },
-];
-
 const CustomLabel = (props) => {
-  const { x, y, width, value, index } = props;
-  if (data[index].name === 'THU') {
+  const { x, y, width, value, index, data } = props;
+  if (data && data[index] && data[index].isMax) {
     return (
       <text x={x + width / 2} y={y - 10} fill="currentColor" className="text-black dark:text-white text-[10px] font-bold font-mono" textAnchor="middle" dominantBaseline="middle">
-        {(value / 1000).toFixed(1)}k
+        {(value >= 1000 ? (value / 1000).toFixed(1) + 'k' : value)}
       </text>
     );
   }
   return null;
 };
 
-export default function MonthlyTrendChart() {
+export default function MonthlyTrendChart({ chartData = [] }) {
   const [timeframe, setTimeframe] = useState('DAILY');
 
   return (
@@ -50,7 +40,7 @@ export default function MonthlyTrendChart() {
 
       <div className="flex-1 w-full min-h-[250px]">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 20, right: 0, left: 0, bottom: 0 }} barSize={40}>
+          <BarChart data={chartData} margin={{ top: 20, right: 0, left: 0, bottom: 0 }} barSize={40}>
             <XAxis 
               dataKey="name" 
               axisLine={false} 
@@ -58,6 +48,7 @@ export default function MonthlyTrendChart() {
               tick={{ fontSize: 10, fill: '#71717a', fontWeight: 600, fontFamily: 'monospace' }} 
               dy={10}
             />
+            <YAxis hide domain={[0, max => Math.max(max, 100)]} />
             <Tooltip 
               cursor={{fill: 'transparent'}}
               content={({ active, payload }) => {
@@ -71,13 +62,13 @@ export default function MonthlyTrendChart() {
                 return null;
               }}
             />
-            <Bar dataKey="value" radius={[2, 2, 0, 0]}>
-              <LabelList dataKey="value" content={<CustomLabel />} />
-              {data.map((entry, index) => (
+            <Bar dataKey="value" radius={[2, 2, 0, 0]} minPointSize={4}>
+              <LabelList dataKey="value" content={(props) => <CustomLabel {...props} data={chartData} />} />
+              {chartData.map((entry, index) => (
                 <Cell 
                   key={`cell-${index}`} 
-                  fill={entry.name === 'THU' ? 'currentColor' : '#f4f4f5'} 
-                  className={entry.name === 'THU' ? 'text-black dark:text-white' : 'dark:fill-zinc-900'}
+                  fill={entry.isMax ? 'currentColor' : '#f4f4f5'} 
+                  className={entry.isMax ? 'text-black dark:text-white' : 'dark:fill-zinc-900'}
                 />
               ))}
             </Bar>
