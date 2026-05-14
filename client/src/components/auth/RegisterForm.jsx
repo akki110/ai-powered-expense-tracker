@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight, Loader2, Mail, Lock, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/hooks/useAuth";
 import {
   Card,
   CardContent,
@@ -15,6 +16,7 @@ import {
 } from "@/components/ui/card";
 
 export default function RegisterForm() {
+  const { register } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -29,10 +31,11 @@ export default function RegisterForm() {
   const onSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    // Mock login delay
-    setTimeout(() => {
+    try {
+      await register(formData.name, formData.email, formData.password);
+    } catch (error) {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   return (

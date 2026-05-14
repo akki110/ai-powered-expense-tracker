@@ -29,7 +29,9 @@ app.get('/', (req, res) => {
 });
 
 // API Routes
-// app.use('/api/expenses', expenseRoutes);
+app.use('/api/auth', require('./routes/user.routes.js'));
+app.use('/api/expenses', require('./routes/expense.routes.js'));
+app.use('/api/budgets', require('./routes/budget.routes.js'));
 
 // Error Handling
 app.use(notFound);

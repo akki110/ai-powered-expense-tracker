@@ -11,9 +11,29 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export default function CreateBudgetForm() {
+import { useState } from "react";
+
+export default function CreateBudgetForm({ onSubmit }) {
+  const [formData, setFormData] = useState({ category: 'logistics', limit: '' });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!formData.limit) return;
+    const dataToSend = {
+      category: formData.category,
+      limit: Number(formData.limit.replace(/[^0-9.-]+/g, "")),
+      period: 'monthly'
+    };
+    try {
+      await onSubmit(dataToSend);
+      setFormData({ category: 'logistics', limit: '' });
+    } catch(err) {
+      // toast already handled
+    }
+  };
+
   return (
-    <div className="bg-zinc-100/50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-6 rounded-sm">
+    <form onSubmit={handleSubmit} className="bg-zinc-100/50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-6 rounded-sm">
       <h3 className="font-bold text-zinc-900 dark:text-white tracking-wide text-lg mb-6">CREATE PARAMETER</h3>
       
       <div className="space-y-4">
@@ -21,7 +41,7 @@ export default function CreateBudgetForm() {
           <label className="text-[10px] font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-widest">
             Category Identifier
           </label>
-          <Select defaultValue="logistics">
+          <Select value={formData.category} onValueChange={(val) => setFormData({ ...formData, category: val })}>
             <SelectTrigger className="w-full h-11 border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 rounded-sm">
               <SelectValue placeholder="Select Category" />
             </SelectTrigger>
@@ -42,7 +62,10 @@ export default function CreateBudgetForm() {
             <Input 
               type="text" 
               placeholder="0.00" 
+              value={formData.limit}
+              onChange={(e) => setFormData({ ...formData, limit: e.target.value })}
               className="w-full h-11 pl-7 border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 rounded-sm font-mono"
+              required
             />
           </div>
         </div>
@@ -58,14 +81,14 @@ export default function CreateBudgetForm() {
         </div>
 
         <div className="flex flex-col gap-3">
-          <Button className="w-full h-11 bg-black text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 rounded-sm font-bold tracking-widest text-[11px] uppercase transition-colors">
+          <Button type="submit" className="w-full h-11 bg-black text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 rounded-sm font-bold tracking-widest text-[11px] uppercase transition-colors">
             Establish Budget
           </Button>
-          <Button variant="outline" className="w-full h-11 bg-transparent border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-sm font-bold tracking-widest text-[11px] uppercase transition-colors">
-            Cancel
+          <Button type="button" variant="outline" onClick={() => setFormData({ category: 'logistics', limit: '' })} className="w-full h-11 bg-transparent border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-sm font-bold tracking-widest text-[11px] uppercase transition-colors">
+            Clear
           </Button>
         </div>
       </div>
-    </div>
+    </form>
   );
 }

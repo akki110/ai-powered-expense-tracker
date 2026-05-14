@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export default function ExpenseFilters({ onAddClick }) {
+export default function ExpenseFilters({ filters, updateFilter, onAddClick }) {
   return (
     <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
       <div className="flex flex-col sm:flex-row gap-4">
@@ -18,14 +18,15 @@ export default function ExpenseFilters({ onAddClick }) {
           <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
             Period
           </label>
-          <Select defaultValue="current-month">
+          <Select value={filters?.period || 'current_month'} onValueChange={(val) => updateFilter('period', val)}>
             <SelectTrigger className="w-[180px] h-10 border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 rounded-sm">
               <SelectValue placeholder="Select Period" />
             </SelectTrigger>
             <SelectContent className="rounded-sm">
-              <SelectItem value="current-month">Current Month</SelectItem>
-              <SelectItem value="last-month">Last Month</SelectItem>
-              <SelectItem value="this-year">This Year</SelectItem>
+              <SelectItem value="current_month">Current Month</SelectItem>
+              <SelectItem value="last_month">Last Month</SelectItem>
+              <SelectItem value="last_3_months">Last 3 Months</SelectItem>
+              <SelectItem value="current_year">This Year</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -34,7 +35,7 @@ export default function ExpenseFilters({ onAddClick }) {
           <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
             Category
           </label>
-          <Select defaultValue="all">
+          <Select value={filters?.category || 'all'} onValueChange={(val) => updateFilter('category', val)}>
             <SelectTrigger className="w-[180px] h-10 border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 rounded-sm">
               <SelectValue placeholder="Select Category" />
             </SelectTrigger>
@@ -45,16 +46,6 @@ export default function ExpenseFilters({ onAddClick }) {
               <SelectItem value="marketing">Marketing</SelectItem>
             </SelectContent>
           </Select>
-        </div>
-
-        <div className="flex items-end">
-          <Button
-            variant="outline"
-            className="h-10 gap-2 rounded-sm border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950"
-          >
-            <Filter className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm font-medium">More Filters</span>
-          </Button>
         </div>
       </div>
 

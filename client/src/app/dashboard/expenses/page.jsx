@@ -5,6 +5,7 @@ import AIExpenseInput from "@/components/expenses/AIExpenseInput";
 import ExpenseFilters from "@/components/expenses/ExpenseFilters";
 import ExpenseTable from "@/components/expenses/ExpenseTable";
 import ExpenseForm from "@/components/expenses/ExpenseForm";
+import { useExpenses } from "@/hooks/useExpenses";
 import {
   Dialog,
   DialogContent,
@@ -16,6 +17,17 @@ import {
 import { Button } from "@/components/ui/button";
 
 export default function ExpensesPage() {
+  const {
+    expenses,
+    loading,
+    filters,
+    pagination,
+    updateFilter,
+    addExpense,
+    editExpense,
+    removeExpense
+  } = useExpenses();
+
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState(null);
@@ -35,16 +47,34 @@ export default function ExpensesPage() {
     setIsDeleteModalOpen(true);
   };
 
-  const confirmDelete = () => {
-    console.log("Deleted", selectedExpense);
-    setIsDeleteModalOpen(false);
+  const confirmDelete = async () => {
+    if (selectedExpense) {
+      await removeExpense(selectedExpense._id);
+      setIsDeleteModalOpen(false);
+    }
+  };
+
+  const handleFormSubmit = async (data, id) => {
+    if (id) {
+      await editExpense(id, data);
+    } else {
+      await addExpense(data);
+    }
   };
 
   return (
     <div className="w-full flex flex-col pt-2 pb-12">
       <AIExpenseInput />
-      <ExpenseFilters onAddClick={handleAddClick} />
+      <ExpenseFilters 
+        filters={filters}
+        updateFilter={updateFilter}
+        onAddClick={handleAddClick} 
+      />
       <ExpenseTable
+        expenses={expenses}
+        loading={loading}
+        pagination={pagination}
+        updateFilter={updateFilter}
         onEditClick={handleEditClick}
         onDeleteClick={handleDeleteClick}
       />
@@ -64,6 +94,7 @@ export default function ExpensesPage() {
           </DialogHeader>
           <ExpenseForm
             initialData={selectedExpense}
+            onSubmit={handleFormSubmit}
             onClose={() => setIsExpenseModalOpen(false)}
           />
         </DialogContent>

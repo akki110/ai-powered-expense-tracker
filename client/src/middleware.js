@@ -1,27 +1,28 @@
 import { NextResponse } from 'next/server';
 
 export function middleware(request) {
-  // TODO: Add your authentication logic here later!
-  /*
+  // Read accessToken from cookies which is set securely by our backend
   const token = request.cookies.get('accessToken');
-  if (request.nextUrl.pathname.startsWith('/dashboard') && !token) {
+  const path = request.nextUrl.pathname;
+  
+  const isAuthPage = path.startsWith('/login') || path.startsWith('/register');
+  const isDashboardPage = path.startsWith('/dashboard');
+
+  // Protect dashboard and its sub-routes
+  if (isDashboardPage && !token) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
-  */
+
+  // Prevent logged in users from seeing login/register
+  if (isAuthPage && token) {
+    return NextResponse.redirect(new URL('/dashboard', request.url));
+  }
 
   return NextResponse.next();
 }
 
-// See "Matching Paths" below to learn more
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico, sitemap.xml, robots.txt (metadata files)
-     */
     '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
   ],
 };

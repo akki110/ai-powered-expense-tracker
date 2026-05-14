@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-export default function ExpenseForm({ initialData = null, onClose }) {
+export default function ExpenseForm({ initialData = null, onClose, onSubmit }) {
   const [formData, setFormData] = useState({
     merchant: "",
     detail: "",
@@ -15,7 +15,10 @@ export default function ExpenseForm({ initialData = null, onClose }) {
 
   useEffect(() => {
     if (initialData) {
-      setFormData(initialData);
+      setFormData({
+        ...initialData,
+        date: initialData.date ? new Date(initialData.date).toISOString().split('T')[0] : "",
+      });
     }
   }, [initialData]);
 
@@ -23,9 +26,13 @@ export default function ExpenseForm({ initialData = null, onClose }) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Submitted:", formData);
+    const dataToSend = {
+      ...formData,
+      amount: Number(formData.amount.toString().replace(/[^0-9.-]+/g,""))
+    };
+    await onSubmit(dataToSend, initialData?._id);
     onClose();
   };
 

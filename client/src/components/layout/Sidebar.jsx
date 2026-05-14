@@ -10,8 +10,10 @@ import {
   Download,
   X,
   PieChart,
+  LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
 
 const navItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -22,6 +24,7 @@ const navItems = [
 
 export default function Sidebar({ mobileOpen, setMobileOpen }) {
   const pathname = usePathname();
+  const { logout } = useAuth();
 
   // A helper function to determine if a path is active
   const isActivePath = (href) => {
@@ -104,11 +107,13 @@ export default function Sidebar({ mobileOpen, setMobileOpen }) {
         <div className="mb-5 h-14 flex justify-center items-center">
           <Button
             variant="ghost"
-            size="icon"
             className="w-48 h-10 border border-red-600 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-md"
-            onClick={() => setMobileOpen(false)}
+            onClick={async () => {
+              setMobileOpen(false);
+              await logout();
+            }}
           >
-            <X className="h-5 w-5 mr-1" />
+            <LogOut className="h-4 w-4 mr-2" />
             <span className="tracking-wide">Logout</span>
           </Button>
         </div>

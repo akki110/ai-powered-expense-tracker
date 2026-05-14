@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight, Loader2, Mail, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/hooks/useAuth";
 import {
   Card,
   CardContent,
@@ -15,6 +16,7 @@ import {
 } from "@/components/ui/card";
 
 export default function LoginForm() {
+  const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -28,10 +30,11 @@ export default function LoginForm() {
   const onSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    // Mock login delay
-    setTimeout(() => {
+    try {
+      await login(formData.email, formData.password);
+    } catch (error) {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   return (
