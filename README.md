@@ -380,7 +380,7 @@ NEXT_PUBLIC_API_URL=
 
 # Author
 
-Developed by Your Name
+Developed by Akshar Patel
 
 ---
 
