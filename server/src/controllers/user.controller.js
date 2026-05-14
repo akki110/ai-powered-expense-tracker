@@ -6,7 +6,8 @@ const { registerUserService, loginUserService } = require('../services/user.serv
 // Secure cookie options
 const options = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production"
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"
 };
 
 exports.registerUser = asyncHandler(async (req, res) => {
@@ -46,15 +47,16 @@ exports.loginUser = asyncHandler(async (req, res) => {
 });
 
 exports.logoutUser = asyncHandler(async (req, res) => {
-    const options = {
+    const logoutOptions = {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production"
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"
     };
 
     return res
         .status(200)
-        .clearCookie("accessToken", options)
-        .clearCookie("refreshToken", options)
+        .clearCookie("accessToken", logoutOptions)
+        .clearCookie("refreshToken", logoutOptions)
         .json(
             new ApiResponse(200, {}, "User logged out successfully")
         );

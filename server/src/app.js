@@ -13,7 +13,10 @@ app.use(helmet({
 }));
 app.use(morgan(process.env.NODE_ENV === 'development' ? 'dev' : 'combined'));
 app.use(cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:3000',
+    origin: [
+        process.env.CLIENT_URL ? process.env.CLIENT_URL.replace(/\/$/, '') : 'http://localhost:3000',
+        'http://localhost:3000'
+    ],
     credentials: true,
 }));
 app.use(express.json());
