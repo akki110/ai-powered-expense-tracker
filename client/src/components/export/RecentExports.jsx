@@ -17,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 import { API_BASE_URL } from "@/lib/constants";
+import Loader from "@/components/common/Loader";
 
 export default function RecentExports({ exportsList = [], loading }) {
   const getDownloadUrl = (filePath) => {
