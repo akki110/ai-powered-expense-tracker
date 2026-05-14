@@ -23,6 +23,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Loader from "../common/Loader";
 
 export default function ExpenseTable({
   expenses = [],
@@ -75,7 +76,7 @@ export default function ExpenseTable({
                 colSpan={6}
                 className="h-24 text-center text-muted-foreground"
               >
-                Loading expenses...
+                <Loader />
               </TableCell>
             </TableRow>
           ) : expenses.length === 0 ? (

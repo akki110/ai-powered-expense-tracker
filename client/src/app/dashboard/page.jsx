@@ -5,17 +5,13 @@ import MonthlyTrendChart from "@/components/dashboard/MonthlyTrendChart";
 import CategoryBreakdownChart from "@/components/dashboard/CategoryBreakdownChart";
 import RecentActivity from "@/components/dashboard/RecentActivity";
 import { useDashboard } from "@/hooks/useDashboard";
-import { Loader2 } from "lucide-react";
+import Loader from "@/components/common/Loader";
 
 export default function DashboardPage() {
   const { data, loading } = useDashboard();
 
   if (loading || !data) {
-    return (
-      <div className="p-8 text-center text-muted-foreground flex justify-center items-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-        <Loader2 className="animate-spin text-black dark:text-white" />
-      </div>
-    );
+    return <Loader />;
   }
 
   return (
