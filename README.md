@@ -6,9 +6,9 @@ A full-stack AI-powered Expense Tracker web application built with Next.js, Expr
 
 # Live Demo
 
-Frontend: https://your-frontend-url.vercel.app
+Frontend: https://expense-tracker-frontend-eight-coral.vercel.app
 
-Backend API: https://your-backend-url.onrender.com
+Backend API: https://expense-tracker-backend-gohl.onrender.com/
 
 ---
 
