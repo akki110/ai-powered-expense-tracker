@@ -15,6 +15,18 @@ exports.createExpense = asyncHandler(async (req, res) => {
     res.status(201).json(new ApiResponse(201, expense, "Expense created successfully"));
 });
 
+exports.createExpenseFromAI = asyncHandler(async (req, res) => {
+    const { text } = req.body;
+    const userId = req.user.id;
+
+    if (!text) {
+        throw new ApiError(400, "Transaction text is required");
+    }
+
+    const expense = await expenseService.createExpenseFromAI(userId, text);
+    res.status(201).json(new ApiResponse(201, expense, "Expense extracted and created by AI successfully"));
+});
+
 exports.getExpenses = asyncHandler(async (req, res) => {
     const userId = req.user.id;
     const result = await expenseService.getExpenses(userId, req.query);

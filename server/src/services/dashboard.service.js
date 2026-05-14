@@ -43,31 +43,60 @@ exports.getDashboardData = async (userId) => {
     // 3. AI Prediction
     const aiPrediction = totalSpendingMonthly > 0 ? totalSpendingMonthly * 1.15 : 0;
 
-    // 4. Trend (Last 7 days)
+    // 4. Trend (Anchor to latest expense date to ensure data appears during testing)
+    const latestExp = await Expense.findOne({ user: userId }).sort({ date: -1 });
+    const anchorDate = latestExp && latestExp.date ? new Date(latestExp.date) : new Date();
+
     const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-    const trendData = [];
+    const dailyTrend = [];
     for (let i = 6; i >= 0; i--) {
-        const d = new Date();
+        const d = new Date(anchorDate);
         d.setDate(d.getDate() - i);
         const startOfDay = new Date(d.setHours(0,0,0,0));
         const endOfDay = new Date(d.setHours(23,59,59,999));
         
         const dayExpenses = await Expense.find({ user: userId, date: { $gte: startOfDay, $lte: endOfDay } });
         const val = dayExpenses.reduce((acc, curr) => acc + curr.amount, 0);
-        trendData.push({
+        dailyTrend.push({
             name: days[startOfDay.getDay()],
             value: val,
-            isMax: false // we will calculate this
+            isMax: false
         });
     }
-    // identify max for highlighting (e.g. 'THU' in original UI)
-    let maxVal = -1;
-    let maxIndex = -1;
-    trendData.forEach((t, idx) => {
-        if(t.value > maxVal) { maxVal = t.value; maxIndex = idx; }
+    let maxValDaily = -1;
+    let maxIndexDaily = -1;
+    dailyTrend.forEach((t, idx) => {
+        if(t.value > maxValDaily) { maxValDaily = t.value; maxIndexDaily = idx; }
     });
-    if(maxIndex !== -1 && maxVal > 0) {
-        trendData[maxIndex].isMax = true;
+    if(maxIndexDaily !== -1 && maxValDaily > 0) {
+        dailyTrend[maxIndexDaily].isMax = true;
+    }
+
+    // Weekly Trend (4 weeks of the month of anchorDate)
+    const year = anchorDate.getFullYear();
+    const month = anchorDate.getMonth();
+    const weeklyTrend = [];
+    for (let w = 1; w <= 4; w++) {
+        const startDay = (w - 1) * 7 + 1;
+        const endDay = w === 4 ? 31 : w * 7;
+        const startOfWeek = new Date(year, month, startDay, 0,0,0,0);
+        const endOfWeek = new Date(year, month, endDay, 23,59,59,999);
+        
+        const weekExpenses = await Expense.find({ user: userId, date: { $gte: startOfWeek, $lte: endOfWeek } });
+        const val = weekExpenses.reduce((acc, curr) => acc + curr.amount, 0);
+        weeklyTrend.push({
+            name: `WK ${w}`,
+            value: val,
+            isMax: false
+        });
+    }
+    let maxValWeekly = -1;
+    let maxIndexWeekly = -1;
+    weeklyTrend.forEach((t, idx) => {
+        if(t.value > maxValWeekly) { maxValWeekly = t.value; maxIndexWeekly = idx; }
+    });
+    if(maxIndexWeekly !== -1 && maxValWeekly > 0) {
+        weeklyTrend[maxIndexWeekly].isMax = true;
     }
 
     // 5. Category Breakdown (Current month)
@@ -78,7 +107,7 @@ exports.getDashboardData = async (userId) => {
     let categoryBreakdownRaw = Object.keys(categoryMap).map(cat => ({
         name: cat,
         value: categoryMap[cat]
-    })).sort((a,b) => b.value - a.value).slice(0, 3); // top 3 categories
+    })).sort((a,b) => b.value - a.value).slice(0, 3);
     
     let categoryBreakdown = [];
     const totalTop3 = categoryBreakdownRaw.reduce((acc, curr) => acc + curr.value, 0);
@@ -90,7 +119,7 @@ exports.getDashboardData = async (userId) => {
     }
 
     // 6. Recent Activity
-    const recentActivity = await Expense.find({ user: userId }).sort({ createdAt: -1 }).limit(3);
+    const recentActivity = await Expense.find({ user: userId }).sort({ date: -1, createdAt: -1 }).limit(3);
 
     return {
         summary: {
@@ -100,7 +129,10 @@ exports.getDashboardData = async (userId) => {
             budgetsNearingLimit,
             aiPrediction
         },
-        monthlyTrend: trendData,
+        monthlyTrend: {
+            daily: dailyTrend,
+            weekly: weeklyTrend
+        },
         categoryBreakdown,
         recentActivity
     };

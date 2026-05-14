@@ -15,8 +15,9 @@ const CustomLabel = (props) => {
   return null;
 };
 
-export default function MonthlyTrendChart({ chartData = [] }) {
+export default function MonthlyTrendChart({ monthlyTrend = { daily: [], weekly: [] } }) {
   const [timeframe, setTimeframe] = useState('DAILY');
+  const chartData = timeframe === 'DAILY' ? monthlyTrend.daily : monthlyTrend.weekly;
 
   return (
     <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 p-6 rounded-sm h-full flex flex-col shadow-sm">

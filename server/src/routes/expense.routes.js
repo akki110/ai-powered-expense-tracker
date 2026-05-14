@@ -1,10 +1,12 @@
 const express = require('express');
-const { createExpense, getExpenses, updateExpense, deleteExpense } = require('../controllers/expense.controller.js');
+const { createExpense, createExpenseFromAI, getExpenses, updateExpense, deleteExpense } = require('../controllers/expense.controller.js');
 const auth = require('../middlewares/auth.middleware.js');
 
 const router = express.Router();
 
 router.use(auth()); // Protect all expense routes
+
+router.post("/ai", createExpenseFromAI);
 
 router.route("/")
     .post(createExpense)

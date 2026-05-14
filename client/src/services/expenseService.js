@@ -9,6 +9,10 @@ export const expenseService = {
         const response = await api.post('/expenses', expenseData);
         return response.data;
     },
+    createExpenseFromAI: async (text) => {
+        const response = await api.post('/expenses/ai', { text });
+        return response.data;
+    },
     updateExpense: async (id, updateData) => {
         const response = await api.put(`/expenses/${id}`, updateData);
         return response.data;

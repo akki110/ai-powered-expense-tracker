@@ -24,6 +24,7 @@ export default function ExpensesPage() {
     pagination,
     updateFilter,
     addExpense,
+    processAIExpense,
     editExpense,
     removeExpense
   } = useExpenses();
@@ -64,7 +65,7 @@ export default function ExpensesPage() {
 
   return (
     <div className="w-full flex flex-col pt-2 pb-12">
-      <AIExpenseInput />
+      <AIExpenseInput onProcess={processAIExpense} />
       <ExpenseFilters 
         filters={filters}
         updateFilter={updateFilter}

@@ -59,6 +59,17 @@ export const useExpenses = () => {
         }
     };
 
+    const processAIExpense = async (text) => {
+        try {
+            await expenseService.createExpenseFromAI(text);
+            toast.success("AI extracted and logged expense successfully! ✨");
+            fetchExpenses();
+        } catch (error) {
+            toast.error(error.response?.data?.message || "AI processing failed");
+            throw error;
+        }
+    };
+
     const editExpense = async (id, updateData) => {
         try {
             await expenseService.updateExpense(id, updateData);
@@ -88,6 +99,7 @@ export const useExpenses = () => {
         pagination,
         updateFilter,
         addExpense,
+        processAIExpense,
         editExpense,
         removeExpense,
         refresh: fetchExpenses
