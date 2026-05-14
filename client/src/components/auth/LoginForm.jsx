@@ -80,7 +80,7 @@ export default function LoginForm() {
               </label>
               <Link
                 href="/forgot-password"
-                className="text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
+                className="text-sm font-medium text-zinc-600 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
               >
                 Forgot password?
               </Link>
@@ -100,7 +100,7 @@ export default function LoginForm() {
             </div>
           </div>
           <Button
-            className="w-full h-10 mt-2 bg-indigo-600 hover:bg-indigo-700 text-white"
+            className="w-full h-10 mt-2 bg-zinc-800 hover:bg-zinc-900 text-white"
             type="submit"
             disabled={isLoading}
           >
@@ -115,7 +115,7 @@ export default function LoginForm() {
           Don&apos;t have an account?{" "}
           <Link
             href="/register"
-            className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
+            className="font-medium text-zinc-900 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
           >
             Sign up
           </Link>
