@@ -4,19 +4,14 @@ export function middleware(request) {
   // Read accessToken from cookies which is set securely by our backend
   const token = request.cookies.get('accessToken');
   const path = request.nextUrl.pathname;
-  
+
   const isAuthPage = path.startsWith('/login') || path.startsWith('/register');
   const isDashboardPage = path.startsWith('/dashboard');
 
-  // Protect dashboard and its sub-routes
-  if (isDashboardPage && !token) {
-    return NextResponse.redirect(new URL('/login', request.url));
-  }
-
-  // Prevent logged in users from seeing login/register
-  if (isAuthPage && token) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
-  }
+  // In cross-domain production deployments (Vercel frontend + Render backend), 
+  // HttpOnly cookies are stored on the backend domain, so Next.js server middleware 
+  // cannot read them directly. We allow client-side AuthContext and Axios interceptors 
+  // to manage session validation.
 
   return NextResponse.next();
 }

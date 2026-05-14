@@ -1,1 +1,8 @@
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+let apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+if (apiUrl.endsWith('/')) {
+  apiUrl = apiUrl.slice(0, -1);
+}
+if (!apiUrl.endsWith('/api')) {
+  apiUrl += '/api';
+}
+export const API_BASE_URL = apiUrl;
